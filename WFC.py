@@ -1,25 +1,23 @@
 import os
-from pdfreader import PDFDocument, SimplePDFViewer
-from collections import Counter
 import re
+from collections import Counter
 import pandas as pd
+import fitz  # PyMuPDF
 
 def extract_text_from_pdf(pdf_path):
     """
-    Extract text from a PDF file.
-    
+    Extract text from a PDF file using PyMuPDF (fitz).
+
     Args:
     pdf_path (str): Path to the PDF file.
-    
+
     Returns:
     str: Extracted text from the PDF.
     """
     text = ''
-    with open(pdf_path, "rb") as file:
-        doc = PDFDocument(file)
-        viewer = SimplePDFViewer(file)
-        for canvas in viewer:
-            text += ''.join(canvas.strings)
+    with fitz.open(pdf_path) as doc:
+        for page in doc:
+            text += page.get_text()
     return text
 
 def count_word_frequency(text, keywords):
